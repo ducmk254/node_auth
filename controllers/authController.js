@@ -2,14 +2,14 @@ const { User } = require("../models/HomeModel");
 const jwt = require("jsonwebtoken");
 const ErrorResponse = require("../utils/errorResponse");
 
-module.exports.login = async (req, res) => {
+module.exports.login = async (req, res,next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     // return res.status(400).json({
     //   status: false,
     //   error: "Vui lòng nhập email và mật khẩu",
     // });
-    next(new ErrorResponse("Vui lòng nhập email và mật khẩu",400));
+    return next(new ErrorResponse("Vui lòng nhập email và mật khẩu",400));
   }
   try {
     const checkUser = await User.findOne({ email }).select("+password");
@@ -20,7 +20,7 @@ module.exports.login = async (req, res) => {
       //   status: false,
       //   error: "Tài khoản không tồn tại trên hệ thống",
       // });
-      next(new ErrorResponse("Tài khoản không tồn tại trên hệ thống",404));
+      return next(new ErrorResponse("Tài khoản không tồn tại trên hệ thống",404));
     }
     // kiểm tra mật khẩu có đúng ko ?
     const isMathPassword = await checkUser.checkPasswords(password);
@@ -29,7 +29,7 @@ module.exports.login = async (req, res) => {
       //   status: false,
       //   error: "Mật khẩu không đúng !!!",
       // });
-      next(new ErrorResponse("Mật khẩu không đúng !!!",404));
+      return next(new ErrorResponse("Mật khẩu không đúng !!!",404));
     }
     // tạo token:
     const authToken = await jwt.sign(
@@ -47,7 +47,7 @@ module.exports.login = async (req, res) => {
     //   status: false,
     //   error: error.message,
     // });
-    next(error);
+    return next(error);
   }
 };
 
@@ -58,7 +58,7 @@ module.exports.register = async (req, res, next) => {
 
     // tạo token:
     const authToken = await jwt.sign(
-      { userID: checkUser._id },
+      { userID: user._id },
       process.env.privateKey,
       {expiresIn:process.env.JWT_EXP}
     );
@@ -72,7 +72,7 @@ module.exports.register = async (req, res, next) => {
     //   status: false,
     //   error: error.message,
     // });
-    next(error);
+    return next(error);
   }
 };
 
