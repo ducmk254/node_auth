@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bycrypt = require("bcrypt");
+const crypto = require('crypto');
 const UserSchema = new mongoose.Schema(
   {
     username: {
@@ -24,9 +25,10 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Vui lòng nhập mật khẩu"],
       select: false, // khi dùng find không show ra password
     },
-    loginToken:String,
-    resetPasswordToken: String, // Khi nhấn reset mật khẩu sẽ tạo ra token, giá trị token lưu ở đây
-    resetPasswordExprise: Date, // thời giạn tồn tại của token này sẽ lưu ở đây
+    resetPasswordToken:{
+      type:String, // Khi nhấn reset mật khẩu sẽ tạo ra token, giá trị token lưu ở đây
+    } ,
+    resetPasswordExprise: {type:Date}, // thời giạn tồn tại của token này sẽ lưu ở đây
   },
   { timestamps: true }
 );
@@ -45,6 +47,16 @@ UserSchema.pre("save", async function (next) {
 
 UserSchema.methods.checkPasswords = async function (password) {
   return await bycrypt.compare(password, this.password);
+};
+
+
+UserSchema.methods.getResetPasswordToken =  function (){
+  const resetToken =  crypto.randomBytes(30).toString("hex"); // Tao 1 ma token random
+
+  this.resetPasswordToken =  crypto.createHash("sha256").update(resetToken).digest("hex"); // tao token va tra ve ket qua
+  this.resetPasswordExprise = Date.now() + 10 * ( 60 * 1000) ; // Thoi gian het han cua token la 10p
+  
+  return resetToken;
 };
 
 module.exports = mongoose.model("User", UserSchema);
