@@ -1,4 +1,5 @@
 require("dotenv").config({ path: "./config.env" });
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,11 +13,12 @@ const errorHandle = require("./middleware/error");
 connectDB();
 // middleware:
 app.use(express.json());
+app.use(cors());
 app.use("/api/auth", authRouter);
-app.use("/api/private",privateRoute);
+app.use("/api/private", privateRoute);
 
-app.use("*",(req,res)=> {
-  return res.status(501).json({status:false,error:'Route not found'});
+app.use("*", (req, res) => {
+  return res.status(501).json({ status: false, error: "Route not found" });
 });
 
 // error:

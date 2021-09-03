@@ -8,7 +8,7 @@ const Login = ({history}) => {
 
     useEffect(()=>{
         if(localStorage.getItem("authToken")){
-            history.pushState("/")
+            history.push("/")
         }
     },[history])
     const loginHandle = async (e)=>{
@@ -17,7 +17,10 @@ const Login = ({history}) => {
         try {
             
         } catch (error) {
-            
+            setError(error);
+            setTimeout(()=>{
+                setError("");
+            },5000);
         }
     }
 
@@ -25,6 +28,7 @@ const Login = ({history}) => {
 
         <div className="login min-width">
             <h3 className="login__title">Login</h3>
+            {error && <span className="error-message">{error}</span>}
             <form onSubmit={loginHandle}>
                 <div className="login__group">
                     <label htmlFor="email" className="login__label">Email:</label>

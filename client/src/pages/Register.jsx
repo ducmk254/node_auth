@@ -1,4 +1,5 @@
 import React,{useState,useEffect} from 'react';
+import axios from "axios";
 import './Register.css';
 import {NavLink} from 'react-router-dom';
 const Register = ({history}) => {
@@ -10,23 +11,54 @@ const Register = ({history}) => {
 
     useEffect(()=>{
         if(localStorage.getItem("authToken")){
-            history.pushState("/")
+            history.push("/");
         }
-    },[history])
+    },[history]);
+
     const registerHandle = async (e)=>{
         e.preventDefault();
-
-        try {
-            
-        } catch (error) {
-            
+        // tao header
+        const config = {
+            header:{
+                "Content-Type":"application/json"
+            }
         }
+        // check password va confirmpassword nhap vao
+        if(password !== confirmpassword){
+            setPassword("");
+            setConfirmpassword("");
+            setTimeout(()=>{
+                setError(""); // sau 5s thi set error la ""
+            },5000); 
+            return setError("Password do not match!");
+        }
+
+        // neu password === confirmpassword thi lam tiep:
+        try {
+            const {data} = await axios.post("http://127.0.0.1:5000/api/auth/register",{username,email,password},config);
+            console.log(data); // data = {status,token}
+            // set authToken
+            localStorage.setItem("authToken",data.token);
+            history.push("/");
+            console.log(" thanh cong ")
+        } catch (err) {
+            console.log(err);
+            //set gia tri cho state: error de show ra canh bao
+            setError(err.response.data.error);
+            setTimeout(()=>{ // sau 5s thi set error ve ""
+                setPassword("");
+                setConfirmpassword("");
+                setError("");
+            },5000);
+        }
+        
     }
 
     return (
 
         <div className="register min-width">
             <h3 className="register__title">Register</h3>
+            {error && <span className="error-message">{error}</span>}
             <form onSubmit={registerHandle}>
                 <div className="register__group">
                     <label htmlFor="username" className="register__label">Username:</label>
