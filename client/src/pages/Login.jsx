@@ -23,7 +23,9 @@ const Login = ({history}) => {
 
             localStorage.setItem("authToken",data.token);
             history.push("/");
+
         } catch (err) {
+            // console.log(err.response.data.status);
             setError(err.response.data.error);
             setTimeout(()=>{
                 setError("");

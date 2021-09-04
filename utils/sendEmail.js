@@ -3,7 +3,7 @@ const ErrorResponse = require("./errorResponse");
 const sendEmail = async (options, next) => {
   try {
     const transporter = await nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: process.env.EMAIL_HOST,
       port: 465,
       secure: true,
       // service: process.env.EMAIL_SERVICE,
