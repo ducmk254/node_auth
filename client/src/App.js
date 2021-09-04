@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -20,6 +20,16 @@ const App = () => {
             exact
             path="/passwordreset/:resetToken"
             component={ResetPassword}
+          />
+          <Route 
+            path="*"
+            component={() => {
+              return (
+                <>
+                  <Redirect to="/" />
+                </>
+              );
+            }}
           />
         </Switch>
       </div>

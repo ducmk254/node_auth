@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import './ResetPassword.css';
 import axios from 'axios';
-const ResetPassword = ({history}) => {
+const ResetPassword = ({history,match}) => {
     const [confirmpassword,setConfirmPassword] = useState("");
     const [password,setPassword] = useState("");
     const [error,setError] = useState("");
@@ -24,7 +24,7 @@ const ResetPassword = ({history}) => {
             },5000)
         }
         try {
-            const {data} = await axios.put("http://127.0.0.1:5000/api/auth/resetpassword/:resetToken",{password},headers);
+            const {data} = await axios.put(`http://127.0.0.1:5000/api/auth/resetpassword/${match.params.resetToken}`,{password},headers); // match.params.resetToken: lấy ra giá trị của param trên đường dẫn trìn duyệt
 
             localStorage.setItem("authToken",data.token);
             history.push("/");
