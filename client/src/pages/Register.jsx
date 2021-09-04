@@ -40,7 +40,7 @@ const Register = ({history}) => {
             // set authToken
             localStorage.setItem("authToken",data.token);
             history.push("/");
-            console.log(" thanh cong ")
+            // console.log(" thanh cong ")
         } catch (err) {
             console.log(err);
             //set gia tri cho state: error de show ra canh bao

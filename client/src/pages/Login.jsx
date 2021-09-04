@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import './Login.css';
 import {NavLink} from 'react-router-dom';
+import axios from 'axios';
 const Login = ({history}) => {
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
@@ -8,16 +9,22 @@ const Login = ({history}) => {
 
     useEffect(()=>{
         if(localStorage.getItem("authToken")){
-            history.push("/")
+            history.push("/");
         }
     },[history])
     const loginHandle = async (e)=>{
         e.preventDefault();
+        const headers = {
+            "Content-Type":"application/json"
+        }
 
         try {
-            
-        } catch (error) {
-            setError(error);
+            const {data} = await axios.post("http://127.0.0.1:5000/api/auth/login",{email,password},headers);
+
+            localStorage.setItem("authToken",data.token);
+            history.push("/");
+        } catch (err) {
+            setError(err.response.data.error);
             setTimeout(()=>{
                 setError("");
             },5000);

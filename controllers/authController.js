@@ -106,13 +106,12 @@ module.exports.forgotpassword = async (req, res, next) => {
     // Send email:
     try {
       // tao email sender:
-      console.log("...tesst...111");
+
       await sendEmail({
         to: user.email,
         subject: "Node_auth-Khôi phục mật khẩu tài khoản",
         text: message,
       });
-      console.log("...tesst...222");
       res.status(200).json({
         status: true,
         message: "Email sent",
